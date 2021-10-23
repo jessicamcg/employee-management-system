@@ -1,7 +1,6 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
 const cTable = require('console.table');
-const { allowedNodeEnvironmentFlags } = require('process');
 
 const db = mysql.createConnection(
     {
@@ -21,15 +20,16 @@ const menu = [
         choices: [
             'Add Department',
             'Add Role',
-            'Add Employee'
+            'Add Employee',
             // Update Employee  // bonus later
+            'Finish'
         ]
     }
 ];
 
 function init() {
     inquirer
-        .prompt([menu])
+        .prompt(menu)
         .then((res) => {
             console.log(res);
             switch (res) {
@@ -42,12 +42,12 @@ function init() {
                 case 'Add Employee':
                     addEmployee();
                     break;
+                // case 'Update Employee':      //bonus, later
+                //     break;
                 case 'Finish':
                     //display results idk
                     console.log('done');
                     break;
-                // case 'Update Employee':      //bonus, later
-                //     break;
             }
         });
 };
