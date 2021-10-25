@@ -70,6 +70,12 @@ const addRolesQ = [
 
 const addEmployeeQ = [
     {
+        type: 'list',
+        message: 'What is the role of the new employee?',
+        name: 'role',
+        choices: roleChoices
+    },
+    {
         type: 'input',
         message: 'Enter the first name of the new employee:',
         name: 'first_name'
@@ -78,12 +84,6 @@ const addEmployeeQ = [
         type: 'input',
         message: 'Enter the last name of the new employee:',
         name: 'last_name'
-    },
-    {
-        type: 'list',
-        message: 'What is the role of the new employee?',
-        name: 'role',
-        choices: roleChoices
     },
     {
         type: 'list',
@@ -176,9 +176,16 @@ function addDepartment() {
 };
 
 function addRole() {
+                 
+    db.query('SELECT * FROM department', function (err, results) {
+        console.log('\n');
+        console.table(results);
+    });
+
     inquirer
     .prompt(addRolesQ)
     .then((res) => {
+        // dept name vs dept id needs to be resolved
         db.query(`INSERT INTO role_info ( title, salary, department_id ) VALUES ( "${res.title}, ${res.salary}, ${res.department}")`, function (err, results) {
             console.log('\n');
             console.log(results);
@@ -189,6 +196,12 @@ function addRole() {
 };
 
 function addEmployee() {
+
+    db.query('SELECT * FROM role_info', function (err, results) {
+        console.log('\n');
+        console.table(results);
+    });
+
     inquirer
     .prompt(addEmployeeQ)
     .then((res) => {
