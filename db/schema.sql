@@ -4,27 +4,30 @@ CREATE DATABASE human_resources_db;
 USE human_resources_db;
 
 CREATE TABLE department (
-    id INT NOT NULL,
+    dept_id INT NOT NULL,
     name VARCHAR(25) NOT NULL,
-    PRIMARY KEY (id)
+    PRIMARY KEY (dept_id)
 );
 
 CREATE TABLE role_info (
-    id INT NOT NULL,
+    role_id INT NOT NULL,
     title VARCHAR(25),
     salary DECIMAL NOT NULL,
     department_id INT NOT NULL,
-    PRIMARY KEY (id)
+    PRIMARY KEY (role_id),
     FOREIGN KEY (department_id)
-    REFERENCES department(id)
+    REFERENCES department(dept_id)
 );
 
 CREATE TABLE employee (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    employee_id INT NOT NULL AUTO_INCREMENT,
     first_name VARCHAR(30) NOT NULL,
     last_name VARCHAR(30) NOT NULL,
     role_id INT NOT NULL,
-    manager_id INT DEFAULT NULL,
+    manager_id INT ,
+    PRIMARY KEY (employee_id),
+    FOREIGN KEY (role_id)
+    REFERENCES role_info(role_id),
     FOREIGN KEY (manager_id)
-    REFERENCES employee(id)
+    REFERENCES employee(employee_id)
 );

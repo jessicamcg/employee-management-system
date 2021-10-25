@@ -2,14 +2,20 @@ const inquirer = require('inquirer');
 const mysql = require('mysql2');
 const cTable = require('console.table');
 
+// const PORT = process.env.PORT || 3001;
+// const app = express();
+
+// app.use(express.urlencoded({ extended: false }));
+// app.use(express.json());
+
 const db = mysql.createConnection(
     {
       host: 'localhost',
       user: 'root',
       password: 'root1234',
-      database: 'books_db'
+      database: 'human_resources_db'
     },
-    console.log(`Connected to the books_db database.`)
+    console.log(`Connected to the human_resources_db database.`)
 );
 
 const menu = [
@@ -52,16 +58,40 @@ function init() {
         });
 };
 
+function viewDepartments() {
+    db.query('', function (err, results) {
+        console.log(results);
+    });
+};
+
+function viewRoles() {
+    db.query('', function (err, results) {
+        console.log(results);
+    });
+};
+
+function viewEmployees() {
+    db.query('', function (err, results) {
+        console.log(results);
+    });
+};
+
 function addDepartment() {
-    
+    db.query('', function (err, results) {
+        console.log(results);
+    });
 };
 
 function addRole() {
-    
+    db.query('', function (err, results) {
+        console.log(results);
+    });
 };
 
 function addEmployee() {
-    
+    db.query('', function (err, results) {
+        console.log(results);
+    });
 };
 
 init();
