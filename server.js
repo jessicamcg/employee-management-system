@@ -18,8 +18,10 @@ const db = mysql.createConnection(
     console.log(`Connected to the human_resources_db database.`)
 );
 
-let managerChoices = ['testing'];
-let deptChoices =[];
+let managerChoices = ['New employee is manager'];
+let deptChoices = ['Executive'];
+let roleChoices = [];
+let employeeArr = [];
 
 const menu = [
     {
@@ -49,6 +51,12 @@ const addDeptQ = [
 
 const addRolesQ = [
     {
+        type: 'list',
+        message: 'Enter the department of the new role:',
+        name: 'department',
+        choices: deptChoices
+    },
+    {
         type: 'input',
         message: 'Enter the title of the new role:',
         name: 'title'
@@ -57,11 +65,6 @@ const addRolesQ = [
         type: 'input',
         message: 'Enter the salary of the new role:',
         name: 'salary'
-    },
-    {
-        type: 'input',
-        message: 'Enter the department of the new role:',
-        name: 'department'
     }
 ];
 
@@ -77,9 +80,10 @@ const addEmployeeQ = [
         name: 'last_name'
     },
     {
-        type: 'input',
+        type: 'list',
         message: 'What is the role of the new employee?',
-        name: 'role'
+        name: 'role',
+        choices: roleChoices
     },
     {
         type: 'list',
@@ -105,13 +109,18 @@ function openMenu() {
                 addRole();
                 break;
             case 'Add Employee':
-                addEmployee();
+                if (roleChoices.length <= 1) {
+                    console.log('\nMust add new role before adding new employee\n');
+                    openMenu();
+                } else {
+                    addEmployee();
+                }
                 break;
             case 'View Departments':
                 viewDepartments();
                 break;
             case 'View Roles':
-                viewRoles();
+                viewRoles(); 
                 break;
             case 'View Employees':
                 viewEmployees();
@@ -131,53 +140,65 @@ function viewDepartments() {
     db.query('SELECT * FROM department', function (err, results) {
         console.log('\n');
         console.table(results);
+        openMenu();
     });
-    openMenu();
 };
 
 function viewRoles() {
     db.query('SELECT * FROM role_info', function (err, results) {
         console.log('\n');
         console.table(results);
+        openMenu();
     });
-    openMenu();
 };
 
 function viewEmployees() {
     db.query('SELECT * FROM employee', function (err, results) {
         console.log('\n');
         console.table(results);
+        openMenu();
     });
-    openMenu();
 };
 
 function addDepartment() {
     inquirer
     .prompt(addDeptQ)
     .then((res) => {
-        console.log(res);
+        // console.log(res);
         db.query(`INSERT INTO department ( dept_name ) VALUES ( "${res.dept_name}")`, function (err, results) {
+            console.log('\n');
             console.log(res.dept_name, 'added to list of departments');
+            // console.log(results);
+            openMenu();
         });
-        openMenu();
+        deptChoices.push(res.dept_name);
     });
 };
 
 function addRole() {
-    db.query('', function (err, results) {
-        console.log(results);
+    inquirer
+    .prompt(addRolesQ)
+    .then((res) => {
+        db.query(`INSERT INTO role_info ( title, salary, department_id ) VALUES ( "${res.title}, ${res.salary}, ${res.department}")`, function (err, results) {
+            console.log('\n');
+            console.log(results);
+            openMenu();
+        });
+        roleChoices.push(res.title)
     });
-
-    // if new role == manager, push to manager choices array
-    
-    openMenu();
 };
 
 function addEmployee() {
-    db.query('', function (err, results) {
-        console.log(results);
+    inquirer
+    .prompt(addEmployeeQ)
+    .then((res) => {
+        db.query(`INSERT INTO employee ( first_name, last_name, role_id, manager_id ) VALUES ( "${res.first_name}, ${res.last_name}, ${res.role}, ${res.manager}")`, function (err, results) {
+            console.log('\n');
+            console.log(results);
+            openMenu();
+        });
     });
-    openMenu();
+    // employeeArr.push(new employee)
 };
 
 init();
