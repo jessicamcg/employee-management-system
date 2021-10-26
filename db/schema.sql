@@ -34,3 +34,7 @@ CREATE TABLE employee (
     REFERENCES employee(employee_id)
     ON DELETE SET NULL
 );
+
+
+-- SELECT employee.employee_id AS Employee_Id, employee.last_name AS Last_Name FROM role_info JOIN employee ON employee.role_id = role_info.title;
+-- SELECT * FROM employee LEFT JOIN role_info ON employee.role_id = role_info.title

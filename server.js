@@ -18,10 +18,29 @@ const db = mysql.createConnection(
     console.log(`Connected to the human_resources_db database.`)
 );
 
+// * needs to get elements from db, currently not persistent
 let managerChoices = ['New employee is manager'];
 let deptChoices = ['Executive'];
-let roleChoices = [];
+// let deptChoices = db.query('SELECT role_info.department_id AS Id, department.dept_name AS Name FROM role_info JOIN department ON role_info.department_id = department.dept_id', function (err, results) {
+//     const { Id, Name } = results[0];
+//     console.log(Id);
+//     console.log(Name);
+//     console.log(results[0]);
+
+//     return results
+// })
+let roleChoices =[];
+// let roleChoices = db.query('SELECT role_info.department_id AS Id, department.dept_name AS Name FROM role_info JOIN department ON role_info.department_id = department.dept_id', function (err, results) {
+//     return results
+// })    || [];
+// console.log(roleChoices);
 let employeeArr = [];
+
+// function getDept() {
+//     db.query('SELECT dept_name FROM department', function (err, results) {
+        
+//     });
+// }
 
 const menu = [
     {
@@ -35,7 +54,7 @@ const menu = [
             'View Departments',
             'View Roles',
             'View Employees',
-            // Update Employee,  // bonus later
+            'Update Employee',
             'Finish'
         ]
     }
@@ -51,10 +70,9 @@ const addDeptQ = [
 
 const addRolesQ = [
     {
-        type: 'list',
-        message: 'Enter the department of the new role:',
-        name: 'department',
-        choices: deptChoices
+        type: 'input',
+        message: 'Enter the department id of the new role:',
+        name: 'department'
     },
     {
         type: 'input',
@@ -70,10 +88,9 @@ const addRolesQ = [
 
 const addEmployeeQ = [
     {
-        type: 'list',
-        message: 'What is the role of the new employee?',
-        name: 'role',
-        choices: roleChoices
+        type: 'input',
+        message: 'What is the role id of the new employee?',
+        name: 'role'
     },
     {
         type: 'input',
@@ -86,10 +103,22 @@ const addEmployeeQ = [
         name: 'last_name'
     },
     {
-        type: 'list',
-        message: 'Who is the manager of the new employee?',
-        name: 'manager',
-        choices: managerChoices
+        type: 'input',
+        message: "What is the manager's employee id for the new employee? (Press enter if new employee is manager)",
+        name: 'manager'
+    }
+];
+
+const updateEmpQ = [
+    {
+        type: 'input',
+        message: 'Enter the employee id of the employee you would like to update:',
+        name: 'who'
+    },
+    {
+        type: 'input',
+        message: 'Enter the new role id of the employee:',
+        name: 'newRole'
     }
 ]
 
@@ -109,12 +138,7 @@ function openMenu() {
                 addRole();
                 break;
             case 'Add Employee':
-                if (roleChoices.length <= 1) {
-                    console.log('\nMust add new role before adding new employee\n');
-                    openMenu();
-                } else {
                     addEmployee();
-                }
                 break;
             case 'View Departments':
                 viewDepartments();
@@ -125,13 +149,13 @@ function openMenu() {
             case 'View Employees':
                 viewEmployees();
                 break;
-                
-            // case 'Update Employee':      //bonus, later
-            //     break;
+            case 'Update Employee':
+                updateEmployee();
+                break;
             case 'Finish':
                 //display results idk
                 console.log('Exited application.');
-                break;
+                process.exit(0);
         }
     });
 }
@@ -165,18 +189,19 @@ function addDepartment() {
     .prompt(addDeptQ)
     .then((res) => {
         // console.log(res);
-        db.query(`INSERT INTO department ( dept_name ) VALUES ( "${res.dept_name}")`, function (err, results) {
+        db.query(`INSERT INTO department ( dept_name ) VALUES ("${res.dept_name}")`, function (err, results) {
             console.log('\n');
             console.log(res.dept_name, 'added to list of departments');
             // console.log(results);
             openMenu();
         });
-        deptChoices.push(res.dept_name);
+        
+        // deptChoices.push(res.dept_name);
     });
 };
 
 function addRole() {
-                 
+
     db.query('SELECT * FROM department', function (err, results) {
         console.log('\n');
         console.table(results);
@@ -185,13 +210,19 @@ function addRole() {
     inquirer
     .prompt(addRolesQ)
     .then((res) => {
-        // dept name vs dept id needs to be resolved
-        db.query(`INSERT INTO role_info ( title, salary, department_id ) VALUES ( "${res.title}, ${res.salary}, ${res.department}")`, function (err, results) {
+        
+        // let deptName = db.query('SELECT role_info.department_id AS Id, department.dept_name AS Name FROM role_info JOIN department ON role_info.department_id = department.dept_id', function (err, results) {
+        //     return results
+        // })
+
+        // console.log(deptName);
+
+        db.query(`INSERT INTO role_info ( title, salary, department_id ) VALUES ( "${res.title}", ${res.salary}, ${res.department})`, function (err, results) {
             console.log('\n');
-            console.log(results);
+            console.log(res.title, 'added to list of roles');
             openMenu();
         });
-        roleChoices.push(res.title)
+        // roleChoices.push(res.title)
     });
 };
 
@@ -205,13 +236,32 @@ function addEmployee() {
     inquirer
     .prompt(addEmployeeQ)
     .then((res) => {
-        db.query(`INSERT INTO employee ( first_name, last_name, role_id, manager_id ) VALUES ( "${res.first_name}, ${res.last_name}, ${res.role}, ${res.manager}")`, function (err, results) {
+        db.query(`INSERT INTO employee ( first_name, last_name, role_id, manager_id ) VALUES ( "${res.first_name}", "${res.last_name}", "${res.role}", "${res.manager}")`, function (err, results) {
             console.log('\n');
             console.log(results);
             openMenu();
         });
+    // employeeArr.push(`${res.first_name} ${res.last_name}`)
     });
-    // employeeArr.push(new employee)
+};
+
+function updateEmployee() {
+    db.query('SELECT * FROM employee', function (err, results) {
+        console.log('\n');
+        console.table(results);
+    });
+
+    inquirer
+    .prompt(updateEmpQ)
+    .then((res) => {
+        db.query(`UPDATE employee SET role_id = ${res.newRole} WHERE employee_id = ${res.who}`, function (err, results) {
+            console.log('\n');
+            console.log('Employee has been updated');
+            openMenu();
+        });
+    // employeeArr.push(`${res.first_name} ${res.last_name}`)
+    });
+
 };
 
 init();
