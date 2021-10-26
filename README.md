@@ -24,5 +24,5 @@ When the user chooses to finish, the application closes.
 
 ![Command-line-example](./assets/commandlineexample.png)
 
-## Live Link
+## Walkthrough Video
 https://watch.screencastify.com/v/2oTxbTJoLsww3XzrojRT
