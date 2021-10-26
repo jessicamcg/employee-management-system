@@ -239,6 +239,7 @@ function addEmployee() {
         db.query(`INSERT INTO employee ( first_name, last_name, role_id, manager_id ) VALUES ( "${res.first_name}", "${res.last_name}", "${res.role}", "${res.manager}")`, function (err, results) {
             console.log('\n');
             // console.log(results);
+            console.log('New employee has been added');
             openMenu();
         });
     // employeeArr.push(`${res.first_name} ${res.last_name}`)

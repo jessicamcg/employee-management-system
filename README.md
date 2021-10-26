@@ -22,6 +22,24 @@ When the user chooses to update an employee, the user is prompted to fulfill a s
 
 When the user chooses to finish, the application closes.
 
+## Installation
+[MySQL2 package](https://www.npmjs.com/package/mysql2)
+
+[Inquirer package](https://www.npmjs.com/package/inquirer)
+
+[console.table package](https://www.npmjs.com/package/console.table)
+
+
+```bash
+npm i
+```
+Or:
+```bash
+npm i inquirer
+npm i --save mysql2
+npm i console.table --save
+```
+
 ![Command-line-example](./assets/commandlineexample.png)
 
 ## Walkthrough Video
